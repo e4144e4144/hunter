@@ -521,8 +521,12 @@ function buildPost(race,scored,rank,waku){
   const raceTag=`${venue}${raceNumStr}`;
 
   return`【死に枠】${dateStr} ${venue} ${raceNumStr} ${race.surf||''}${race.dist||''}
+
+  
 ${worst}枠
 ${horseLines}
+
+
 #競馬 #死に枠 #${venue} #${raceTag} #${courseTag}`;
 }
 
@@ -875,8 +879,12 @@ function buildResultPostForCard(match, resultData) {
   const rt = raceTitle || '';
 
   return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}  ${race.surf||''}${race.dist||''}
+
+  
 ${deadWaku}枠
 ${horseLines}
+
+
 #競馬 #死に枠 #${v} #${tag} #${courseTag}`;
 }
 
