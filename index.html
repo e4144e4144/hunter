@@ -522,14 +522,13 @@ function buildPost(race,scored,rank,waku){
   const courseTag=(race.courseKey||'').replace(/m$/,'');
   const raceTag=`${venue}${raceNumStr}`;
 
-  return`${medal}【死に枠】${dateStr} ${venue} ${raceNumStr} ${race.surf||''}${race.dist||''}
+  return`${medal}【死に枠】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}
 
 ${worst}枠、要注意。
-複勝率${wVal}%。
+独自解析で導き出した複勝率${wVal}%。
 
 ${horseLines}
 
-それでも買いますか？
 #競馬 #死に枠 #${venue} #${raceTag} #${courseTag}`;
 }
 
@@ -876,7 +875,7 @@ function buildResultPostForCard(match, resultData) {
     const f = parseInt(h.finishing);
     return isNaN(f) || f > 3;
   });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
+  const resultMark = allOut ? '✅ 的中！' : '❌ ハズレ';
 
   const v = venue || race.venue;
   const rn = raceNum || race.raceNum;
@@ -885,7 +884,7 @@ function buildResultPostForCard(match, resultData) {
   const rd = raceDate || race.raceDate || '';
   const rt = raceTitle || '';
 
-  return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}
+  return `💀【死に枠 結果報告】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}
 
 事前に${deadWaku}枠を死に枠認定⚠️
 ${horseLines}
@@ -922,7 +921,7 @@ function buildResultPost(qualified, resultData) {
     const f = parseInt(h.finishing);
     return isNaN(f) || f > 3;
   });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
+  const resultMark = allOut ? '✅ 的中！' : '❌ ハズレ';
 
   const tag = `${venue}${raceNum}`;
   const courseTag = (match.race.courseKey || '').replace(/m$/, '');
