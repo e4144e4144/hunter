@@ -104,7 +104,7 @@ body{font-family:system-ui,'Noto Sans JP',sans-serif;background:var(--bg);color:
 <div class="hdr">
   <div class="logo">☠</div>
   <div>
-    <div class="hdr-t">死に枠ハンター <span style="font-size:11px;background:rgba(0,229,160,.2);color:#00e5a0;padding:2px 7px;border-radius:4px;margin-left:6px;font-weight:700;letter-spacing:.5px">v4.1</span></div>
+    <div class="hdr-t">死に枠ハンター <span style="font-size:11px;background:rgba(0,229,160,.2);color:#00e5a0;padding:2px 7px;border-radius:4px;margin-left:6px;font-weight:700;letter-spacing:.5px">v4.6</span></div>
     <div class="hdr-s">v2: 脚質修正 &nbsp;/&nbsp; v3: 同枠5番人気以内2頭以上→除外 &nbsp;/&nbsp; v4: 死に枠36点以上→除外・スコア非表示 &nbsp;/&nbsp; ※オッズはPDF発行時点</div>
   </div>
 </div>
@@ -506,30 +506,23 @@ function getDangerHorses(race,scored){
 }
 
 function buildPost(race,scored,rank,waku){
-  const medal=['🥇','🥈','🥉'][rank]||'💀';
   const worst=waku;
   const fr=scored.frames[worst];
-  const wVal=fr?.wVal!=null?fr.wVal.toFixed(1):'—';
   const dateStr=race.raceDate||'';
   const raceNumStr=race.raceNum||'';
   const venue=race.venue;
 
-  // 所属馬リスト（オッズ付き）
+  // 所属馬リスト（馬名 オッズ倍 を縦並び）
   const horses=fr?.horses||[];
-  const horseLines=horses.map(h=>`${h.name} ${h.odds!=null&&h.odds<999?h.odds+'倍':''}`).join(' / ');
+  const horseLines=horses.map(h=>`${h.name} ${h.odds!=null&&h.odds<999?h.odds+'倍':''}`).join('\n');
 
   // ハッシュタグ
   const courseTag=(race.courseKey||'').replace(/m$/,'');
   const raceTag=`${venue}${raceNumStr}`;
 
-  return`${medal}【死に枠】${dateStr} ${venue} ${raceNumStr} ${race.surf||''}${race.dist||''}
-
-${worst}枠、要注意。
-複勝率${wVal}%。
-
+  return`【死に枠】${dateStr} ${venue} ${raceNumStr} ${race.surf||''}${race.dist||''}
+${worst}枠
 ${horseLines}
-
-それでも買いますか？
 #競馬 #死に枠 #${venue} #${raceTag} #${courseTag}`;
 }
 
@@ -869,14 +862,10 @@ function buildResultPostForCard(match, resultData) {
   const horseLines = deadHorses.map(h => {
     const fin = h.finishing === '中止' ? '中止' : h.finishing === '取消' ? '取消' : h.finishing + '着';
     const ninkiStr = h.ninki ? `${h.ninki}番人気` : '';
-    return `🔲 ${h.name}（${ninkiStr}） → ${fin}`;
+    const allOut3 = (() => { const f = parseInt(h.finishing); return isNaN(f) || f > 3; })();
+    const mark = allOut3 ? ' \u2705 的中！' : ' \u274C ハズレ。';
+    return `${h.name}（${ninkiStr}） → ${fin}　${mark}`;
   }).join('\n');
-
-  const allOut = deadHorses.every(h => {
-    const f = parseInt(h.finishing);
-    return isNaN(f) || f > 3;
-  });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
 
   const v = venue || race.venue;
   const rn = raceNum || race.raceNum;
@@ -885,13 +874,9 @@ function buildResultPostForCard(match, resultData) {
   const rd = raceDate || race.raceDate || '';
   const rt = raceTitle || '';
 
-  return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}
-
-事前に${deadWaku}枠を死に枠認定⚠️
+  return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}  ${race.surf||''}${race.dist||''}
+${deadWaku}枠
 ${horseLines}
-
-${resultMark}
-
 #競馬 #死に枠 #${v} #${tag} #${courseTag}`;
 }
 
@@ -914,26 +899,17 @@ function buildResultPost(qualified, resultData) {
   const horseLines = deadHorses.map(h => {
     const fin = h.finishing === '中止' ? '中止' : h.finishing === '取消' ? '取消' : h.finishing + '着';
     const ninkiStr = h.ninki ? `${h.ninki}番人気` : '';
-    return `🔲 ${h.name}（${ninkiStr}） → ${fin}`;
+    const allOut3 = (() => { const f = parseInt(h.finishing); return isNaN(f) || f > 3; })();
+    const mark = allOut3 ? ' \u2705 的中！' : ' \u274C ハズレ。';
+    return `${h.name}（${ninkiStr}） → ${fin}　${mark}`;
   }).join('\n');
-
-  // 全馬圏外かチェック → 的中判定
-  const allOut = deadHorses.every(h => {
-    const f = parseInt(h.finishing);
-    return isNaN(f) || f > 3;
-  });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
 
   const tag = `${venue}${raceNum}`;
   const courseTag = (match.race.courseKey || '').replace(/m$/, '');
 
-  return `💀【死に枠 結果報告】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}
-
-事前に${deadWaku}枠を死に枠認定⚠️
+  return `💀【死に枠 結果報告】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}  ${match.race.surf||''}${match.race.dist||''}
+${deadWaku}枠
 ${horseLines}
-
-${resultMark}
-
 #競馬 #死に枠 #${venue} #${tag} #${courseTag}`;
 }
 
