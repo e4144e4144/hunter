@@ -447,7 +447,12 @@ function parseText(text,filename){
   // 登録頭数（除外馬込み）= PDFに記載の最大馬番 → 枠番計算に使う
   let registeredTotal=horses.length;
   const patWU=/^\d\s+(\d{1,2})\s+/;
-  lines.forEach(l=>{const m=patWU.exec(l);if(m){const n=parseInt(m[1]);if(n>registeredTotal&&n<=18)registeredTotal=n;}});
+  // パターン2: 「馬番 馬名...」行（枠番なし・8枠馬でよくある）
+  const patUO=/^(\d{1,2})\s+[\u30A0-\u30FF\u4E00-\u9FFF]/;
+  lines.forEach(l=>{
+    const m=patWU.exec(l)||patUO.exec(l);
+    if(m){const n=parseInt(m[1]);if(n>registeredTotal&&n<=18)registeredTotal=n;}
+  });
 
   const total=registeredTotal;
   const byWaku={};
