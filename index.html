@@ -452,7 +452,7 @@ function parseText(text,filename){
   const total=registeredTotal;
   const byWaku={};
   horses.forEach((h,i)=>{const w=horseToWaku(i+1,total);(byWaku[w]=byWaku[w]||[]).push(h);});
-  return{raceName,raceNum:raceNumOnly,venue,surf,dist,courseKey,raceDate,horsesByWaku:byWaku,totalHorses:total};
+  return{raceName,raceNum:raceNumOnly,raceTitle,venue,surf,dist,courseKey,raceDate,horsesByWaku:byWaku,totalHorses:total};
 }
 
 // ===== スコア計算 =====
@@ -522,7 +522,8 @@ function buildPost(race,scored,rank,waku){
   const courseTag=(race.courseKey||'').replace(/m$/,'');
   const raceTag=`${venue}${raceNumStr}`;
 
-  return`${medal}【死に枠】${dateStr} ${venue} ${raceNumStr} ${race.surf||''}${race.dist||''}
+  const titleLine=`${dateStr} ${venue} ${raceNumStr}${race.raceTitle?' '+race.raceTitle:''} ${race.surf||''}${race.dist||''}`;
+  return`${medal}【死に枠】${titleLine}
 
 ${worst}枠、要注意。
 複勝率${wVal}%。
@@ -885,7 +886,10 @@ function buildResultPostForCard(match, resultData) {
   const rd = raceDate || race.raceDate || '';
   const rt = raceTitle || '';
 
-  return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}
+  const courseLine1=(race.courseKey||'').replace(/(芝|ダート)(\d+m)$/,'$1$2').replace(/^.+(芝|ダート)/,'$1')||'';
+  const surf1=(race.courseKey||'').match(/芝|ダート/)?.[0]||'';
+  const dist1=(race.courseKey||'').match(/\d+m/)?.[0]||'';
+  return `💀【死に枠 結果報告】${rd} ${v} ${rn}${rt ? ' ' + rt : ''}${surf1&&dist1?' '+surf1+dist1:''}
 
 事前に${deadWaku}枠を死に枠認定⚠️
 ${horseLines}
@@ -927,7 +931,9 @@ function buildResultPost(qualified, resultData) {
   const tag = `${venue}${raceNum}`;
   const courseTag = (match.race.courseKey || '').replace(/m$/, '');
 
-  return `💀【死に枠 結果報告】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}
+  const surf2=(match.race.courseKey||'').match(/芝|ダート/)?.[0]||'';
+  const dist2=(match.race.courseKey||'').match(/\d+m/)?.[0]||'';
+  return `💀【死に枠 結果報告】${raceDate} ${venue} ${raceNum}${raceTitle ? ' ' + raceTitle : ''}${surf2&&dist2?' '+surf2+dist2:''}
 
 事前に${deadWaku}枠を死に枠認定⚠️
 ${horseLines}
