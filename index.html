@@ -530,12 +530,11 @@ function buildPost(race,scored,rank,waku){
   const titleLine=`${dateStr} ${venue} ${raceNumStr}${race.raceTitle?' '+race.raceTitle:''} ${race.surf||''}${race.dist||''}`;
   return`${medal}【死に枠】${titleLine}
 
-${worst}枠、要注意。
-複勝率${wVal}%。
+${worst}枠 要注意
+複勝率${wVal}%
 
 ${horseLines}
 
-それでも買いますか？
 #競馬 #死に枠 #${venue} #${raceTag} #${courseTag}`;
 }
 
@@ -882,7 +881,7 @@ function buildResultPostForCard(match, resultData) {
     const f = parseInt(h.finishing);
     return isNaN(f) || f > 3;
   });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
+  const resultMark = allOut ? '✅ 的中' : '❌ ハズレ';
 
   const v = venue || race.venue;
   const rn = raceNum || race.raceNum;
@@ -931,7 +930,7 @@ function buildResultPost(qualified, resultData) {
     const f = parseInt(h.finishing);
     return isNaN(f) || f > 3;
   });
-  const resultMark = allOut ? '✅ 的中！ 死に枠は眠ったまま。' : '❌ ハズレ。死に枠が生き返った。';
+  const resultMark = allOut ? '✅ 的中' : '❌ ハズレ';
 
   const tag = `${venue}${raceNum}`;
   const courseTag = (match.race.courseKey || '').replace(/m$/, '');
